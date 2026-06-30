@@ -57,13 +57,12 @@ export default {
     // If the query is purely numeric and 8-14 digits, treat as barcode
     const isBarcode = /^\d{8,14}$/.test(query);
 
+    const headers = { "User-Agent": "VellumFitnessCompanion/0.1" };
+
     try {
       if (isBarcode) {
         const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(query)}.json?fields=product_name,brands,nutriments,image_url`;
-        const res = await fetch(url, {
-          signal: ctx.signal,
-          headers: { "User-Agent": "VellumFitnessCompanion/0.1" },
-        });
+        const res = await fetchWithRetry(url, headers, ctx.signal);
         if (!res.ok) {
           return {
             content: `OpenFoodFacts returned HTTP ${res.status} for barcode ${query}.`,
@@ -83,15 +82,12 @@ export default {
         return { content: result, isError: false };
       }
 
-      // Text search
-      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&fields=product_name,brands,nutriments,image_url&page_size=${pageSize}`;
-      const res = await fetch(url, {
-        signal: ctx.signal,
-        headers: { "User-Agent": "VellumFitnessCompanion/0.1" },
-      });
+      // Text search via v2 API (the /cgi/search.pl endpoint is frequently 503)
+      const url = `https://world.openfoodfacts.org/api/v2/search?search_terms=${encodeURIComponent(query)}&fields=product_name,brands,nutriments,image_url&page_size=${pageSize}`;
+      const res = await fetchWithRetry(url, headers, ctx.signal);
       if (!res.ok) {
         return {
-          content: `OpenFoodFacts search returned HTTP ${res.status}.`,
+          content: `OpenFoodFacts search returned HTTP ${res.status}. The service may be temporarily unavailable. Try again in a moment.`,
           isError: true,
         };
       }
@@ -138,4 +134,24 @@ function formatProduct(
 
   parts.push("[per 100g]");
   return parts.join(" | ");
+}
+
+async function fetchWithRetry(
+  url: string,
+  headers: Record<string, string>,
+  signal?: AbortSignal,
+  maxRetries = 2,
+): Promise<Response> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    if (signal?.aborted) throw new Error("Request aborted");
+    const res = await fetch(url, { signal, headers });
+    // Retry on 503 (service overloaded) and 429 (rate limited)
+    if ((res.status === 503 || res.status === 429) && attempt < maxRetries) {
+      await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+      continue;
+    }
+    return res;
+  }
+  // unreachable but satisfies the type checker
+  return new Response(null, { status: 503 });
 }
