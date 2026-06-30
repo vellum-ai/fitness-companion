@@ -39,6 +39,99 @@ After installing, edit `plugins/fitness-companion/config.json` to fill in your p
 
 The assistant can also calculate targets for you. Just ask: "What should my macros be for a cut?"
 
+## How to Use
+
+You do not need to memorize tool names or commands. Just talk to your assistant naturally and it will use the right tool automatically.
+
+### Logging meals
+
+Tell your assistant what you ate. It will look up the nutrition and log it.
+
+```
+"I had a chicken salad bowl for lunch"
+"I just ate 200g of Greek yogurt with honey"
+"log a snack: two hard-boiled eggs and an apple"
+```
+
+If you know the macros already, include them:
+
+```
+"log dinner: 600 calories, 45g protein, 50g carbs, 20g fat"
+```
+
+### Logging workouts
+
+Describe your workout after you finish it:
+
+```
+"I did 3x10 squats at 60kg, 3x10 bench at 50kg"
+"just went for a 30-minute run, moderate intensity"
+"log my workout: 5x5 deadlifts at 100kg"
+```
+
+### Logging weight
+
+Share your weigh-in whenever you step on the scale:
+
+```
+"weighed in at 74.5 kg this morning"
+"I'm 82kg now"
+"log weight: 76.2 kg, 22% body fat"
+```
+
+### Looking up nutrition
+
+Ask about any food and the assistant will search OpenFoodFacts:
+
+```
+"how many calories in a banana?"
+"look up the macros for Chobani Greek yogurt"
+"what's the nutrition on a Costco rotisserie chicken?"
+```
+
+You can also give a barcode:
+
+```
+"look up barcode 3017620422003"
+```
+
+### Calculating macro targets
+
+If you have not set up your config yet, ask the assistant to calculate targets:
+
+```
+"calculate my macros: 30 years old, female, 168cm, 75kg, moderate activity, goal is to cut"
+"what should my calories be for a bulk at 80kg?"
+```
+
+The assistant will give you daily calorie and macro targets. Copy them into `config.json` or ask the assistant to update it for you.
+
+### Checking progress
+
+Ask for a summary anytime:
+
+```
+"how am I doing this week?"
+"give me my progress for the last 30 days"
+"what's my workout streak?"
+"how much weight have I lost?"
+```
+
+### Getting coaching advice
+
+The assistant loads the right coaching skill based on what you need:
+
+```
+"what should I eat to hit my protein goal?"
+"can you build me a beginner workout routine?"
+"I keep skipping workouts, help me stay consistent"
+"I'm always hungry in the afternoons, any ideas?"
+```
+
+### Daily context
+
+Every time you talk to your assistant, it already knows your fitness state for the day: how many calories you have eaten, how much protein, whether you worked out, and your latest weight. You do not need to call any tool or check anything manually. Just ask questions and the assistant will factor in your current progress automatically.
+
 ## Tools
 
 | Tool | Description |
