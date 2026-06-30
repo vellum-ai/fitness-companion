@@ -11,7 +11,8 @@
     "daily_carbs_g": null,
     "daily_fat_g": null,
     "eating_window_start": null,
-    "eating_window_end": null
+    "eating_window_end": null,
+    "usda_api_key": null
   },
   "preferences": {
     "units": "metric",
