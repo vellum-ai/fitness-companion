@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Fitness and nutrition companion plugin for the Vellum assistant. Logs meals, workouts, and weight; looks up nutrition data from OpenFoodFacts; calculates macro targets; and injects daily fitness context into every conversation.",
   "peerDependencies": {
-    "@vellumai/plugin-api": "^0.8.0"
+    "@vellumai/plugin-api": ">=0.8.0"
   },
   "license": "MIT"
 }
