@@ -13,7 +13,7 @@ interface OFFSearchResponse {
 }
 
 interface OFFProductResponse {
-  status?: number;
+  status?: number | string;
   product?: {
     product_name?: string;
     brands?: string;
@@ -61,7 +61,7 @@ export default {
 
     try {
       if (isBarcode) {
-        const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(query)}.json?fields=product_name,brands,nutriments,image_url`;
+        const url = `https://world.openfoodfacts.org/api/v3/product/${encodeURIComponent(query)}.json?fields=product_name,brands,nutriments,image_url`;
         const res = await fetchWithRetry(url, headers, ctx.signal);
         if (!res.ok) {
           return {
@@ -70,7 +70,9 @@ export default {
           };
         }
         const data = (await res.json()) as OFFProductResponse;
-        if (data.status !== 1 || !data.product) {
+        // v3 returns status: "success", v2 returns status: 1
+        const found = data.status === "success" || data.status === 1;
+        if (!found || !data.product) {
           return {
             content: `No product found for barcode ${query}.`,
             isError: false,
