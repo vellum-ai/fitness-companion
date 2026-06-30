@@ -1,0 +1,20 @@
+{
+  "userProfile": {
+    "age": null,
+    "sex": null,
+    "height_cm": null,
+    "weight_kg": null,
+    "activity_level": "moderate",
+    "goal": "maintain",
+    "daily_calories": null,
+    "daily_protein_g": null,
+    "daily_carbs_g": null,
+    "daily_fat_g": null,
+    "eating_window_start": null,
+    "eating_window_end": null
+  },
+  "preferences": {
+    "units": "metric",
+    "context_injection_enabled": true
+  }
+}
