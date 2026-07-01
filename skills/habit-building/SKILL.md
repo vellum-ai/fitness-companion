@@ -38,7 +38,8 @@ and nutrition, not the training and nutrition themselves.
 
 3. **Track to build awareness.** Logging meals and workouts is not just
    data collection, it is the habit itself. The act of logging reinforces
-   the behavior. Use `fitness_log_meal` and `fitness_log_workout`.
+   the behavior. Use `fitness_log_meal` (from the nutrition-coaching skill) and
+   `fitness_log_workout` (from the workout-planning skill).
 
 4. **Expect lapses.** Missing one workout or one meal log is not failure.
    The pattern matters more than any single day. Never make the user feel

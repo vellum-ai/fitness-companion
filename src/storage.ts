@@ -1,29 +1,52 @@
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "node:url";
+
+// The plugin root is the parent of this file's directory (<pluginDir>/src/storage.ts).
+// Deriving it here lets the storage layer work both in-process (where the init
+// hook sets the data dir explicitly) and inside the skill sandbox subprocess
+// (where the init hook does not run) without any per-tool wiring.
+const PLUGIN_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const DEFAULT_DATA_DIR = path.join(PLUGIN_DIR, "data");
+const CONFIG_PATH = path.join(PLUGIN_DIR, "config.json");
 
 let dataDir = "";
 let pluginConfig: unknown = null;
+let configLoaded = false;
 
 export function setDataDir(dir: string): void {
   dataDir = dir;
 }
 
 export function getDataDir(): string {
-  return dataDir;
+  // The init hook sets the host-resolved storage dir (<pluginDir>/data). When it
+  // has not run (skill tools execute in a sandbox subprocess), fall back to the
+  // same <pluginDir>/data path so both paths read and write the same files.
+  return dataDir || DEFAULT_DATA_DIR;
 }
 
 export function setConfig(config: unknown): void {
   pluginConfig = config;
+  configLoaded = true;
 }
 
 export function getConfig<T = any>(): T {
+  // Lazily read <pluginDir>/config.json when the init hook has not populated the
+  // config (skill sandbox), mirroring how the host resolves user-plugin config.
+  if (!configLoaded) {
+    try {
+      pluginConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8"));
+    } catch {
+      pluginConfig = null;
+    }
+    configLoaded = true;
+  }
   return pluginConfig as T;
 }
 
 export function ensureCsv(filename: string, headers: string[]): void {
-  if (!dataDir) return;
-  const filepath = path.join(dataDir, filename);
-  const dir = path.dirname(filepath);
+  const dir = getDataDir();
+  const filepath = path.join(dir, filename);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -33,8 +56,11 @@ export function ensureCsv(filename: string, headers: string[]): void {
 }
 
 export function appendCsv(filename: string, values: (string | number | null)[]): void {
-  if (!dataDir) return;
-  const filepath = path.join(dataDir, filename);
+  const dir = getDataDir();
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  const filepath = path.join(dir, filename);
   const escaped = values.map((v) => {
     const s = String(v ?? "");
     if (s.includes(",") || s.includes('"') || s.includes("\n")) {
@@ -46,8 +72,8 @@ export function appendCsv(filename: string, values: (string | number | null)[]):
 }
 
 export function readCsv(filename: string): Record<string, string>[] {
-  if (!dataDir) return [];
-  const filepath = path.join(dataDir, filename);
+  const dir = getDataDir();
+  const filepath = path.join(dir, filename);
   if (!fs.existsSync(filepath)) return [];
   const content = fs.readFileSync(filepath, "utf-8");
   const lines = content.trim().split("\n");

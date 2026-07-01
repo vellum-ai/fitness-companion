@@ -74,8 +74,9 @@ intensity meticulously.
 - Check the user's config profile for their goal (cut/maintain/bulk).
   During a cut, maintain intensity but expect some volume reduction.
   During a bulk, prioritize progressive overload.
-- Look at recent workout logs via `fitness_get_progress` to see what the
-  user has been doing and suggest adjustments.
+- Look at recent workout logs via `fitness_get_progress` (from the
+  habit-building skill) to see what the user has been doing and suggest
+  adjustments.
 - Ask about equipment access (gym, home, bodyweight only) before
   prescribing exercises.
 - Log suggested workouts so the user can track them with
