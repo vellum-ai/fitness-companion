@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "tools": [
+    {
+      "name": "fitness_get_progress",
+      "description": "Read stored fitness logs and compute progress trends. Returns calorie averages, macro breakdowns, workout counts, weight trends, and streaks for a given time window. Use when the user asks about their progress, wants a summary, or asks how they are doing.",
+      "category": "health",
+      "risk": "low",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "number",
+            "description": "Number of days to look back. Defaults to 7."
+          }
+        }
+      },
+      "executor": "tools/fitness_get_progress.ts",
+      "execution_target": "sandbox"
+    },
+    {
+      "name": "fitness_log_weight",
+      "description": "Log a body weight entry, optionally with body fat percentage. Use when the user shares their weight, steps on a scale, or mentions a weigh-in.",
+      "category": "health",
+      "risk": "low",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "weight_kg": {
+            "type": "number",
+            "description": "Body weight in kilograms."
+          },
+          "body_fat_pct": {
+            "type": "number",
+            "description": "Body fat percentage, if known."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes (e.g. morning weigh-in, post-workout)."
+          }
+        },
+        "required": [
+          "weight_kg"
+        ]
+      },
+      "executor": "tools/fitness_log_weight.ts",
+      "execution_target": "sandbox"
+    }
+  ]
+}

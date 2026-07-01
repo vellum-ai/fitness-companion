@@ -1,24 +1,8 @@
 // tools/fitness_get_progress.ts
 import type { ToolContext, ToolExecutionResult } from "@vellumai/plugin-api";
-import { readCsvSince, readCsv, round, getConfig, todayISO } from "../src/storage.ts";
+import { readCsvSince, readCsv, round, getConfig, todayISO } from "../../../src/storage.ts";
 
-export default {
-  description:
-    "Read stored fitness logs and compute progress trends. Returns calorie averages, macro breakdowns, workout counts, weight trends, and streaks for a given time window. Use when the user asks about their progress, wants a summary, or asks how they are doing.",
-  defaultRiskLevel: "low" as const,
-  input_schema: {
-    type: "object",
-    properties: {
-      days: {
-        type: "number",
-        description: "Number of days to look back. Defaults to 7.",
-      },
-    },
-  },
-  async execute(
-    input: Record<string, unknown>,
-    _ctx: ToolContext,
-  ): Promise<ToolExecutionResult> {
+export async function run(input: Record<string, unknown>, _ctx: ToolContext): Promise<ToolExecutionResult> {
     const days = Math.min(Math.max(Number(input.days) || 7, 1), 365);
 
     const meals = readCsvSince("meals.csv", days);
@@ -140,5 +124,4 @@ export default {
     }
 
     return { content: lines.join("\n"), isError: false };
-  },
-};
+}

@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "tools": [
+    {
+      "name": "fitness_log_workout",
+      "description": "Log a workout entry with exercise details. Use when the user tells you about a workout, exercise session, or physical activity they completed.",
+      "category": "health",
+      "risk": "low",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "workout_type": {
+            "type": "string",
+            "description": "Type of workout (e.g. strength, cardio, yoga, cycling, swimming)."
+          },
+          "exercise": {
+            "type": "string",
+            "description": "Name of the exercise or activity."
+          },
+          "sets": {
+            "type": "number",
+            "description": "Number of sets performed."
+          },
+          "reps": {
+            "type": "number",
+            "description": "Reps per set (or total reps for bodyweight)."
+          },
+          "weight_kg": {
+            "type": "number",
+            "description": "Weight used in kilograms, if applicable."
+          },
+          "duration_min": {
+            "type": "number",
+            "description": "Duration in minutes, for cardio or time-based activities."
+          },
+          "intensity": {
+            "type": "string",
+            "enum": [
+              "easy",
+              "moderate",
+              "hard",
+              "max"
+            ],
+            "description": "Perceived intensity level."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes about the workout."
+          }
+        },
+        "required": [
+          "workout_type",
+          "exercise"
+        ]
+      },
+      "executor": "tools/fitness_log_workout.ts",
+      "execution_target": "sandbox"
+    }
+  ]
+}

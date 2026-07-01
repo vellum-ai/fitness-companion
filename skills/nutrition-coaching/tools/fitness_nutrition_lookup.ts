@@ -1,6 +1,6 @@
 // tools/fitness_nutrition_lookup.ts
 import type { ToolContext, ToolExecutionResult } from "@vellumai/plugin-api";
-import { round, getConfig } from "../src/storage.ts";
+import { round, getConfig } from "../../../src/storage.ts";
 
 // --- OpenFoodFacts types ---
 
@@ -54,34 +54,7 @@ const USDA_NUTRIENTS = {
   SODIUM: 1093,
 } as const;
 
-export default {
-  description:
-    "Look up nutrition information for a food item. Searches USDA FoodData Central (if an API key is configured) or OpenFoodFacts (free, no key). Use when the user asks about calories, macros, or nutrition for a specific food, or wants to find a product by barcode.",
-  defaultRiskLevel: "low" as const,
-  input_schema: {
-    type: "object",
-    properties: {
-      query: {
-        type: "string",
-        description: "Food name to search for, or a barcode number.",
-      },
-      page_size: {
-        type: "number",
-        description: "Max results to return. Defaults to 5.",
-      },
-      data_source: {
-        type: "string",
-        enum: ["auto", "usda", "openfoodfacts"],
-        description:
-          "Which data source to use. 'auto' uses USDA if an API key is configured, otherwise falls back to OpenFoodFacts. Defaults to 'auto'.",
-      },
-    },
-    required: ["query"],
-  },
-  async execute(
-    input: Record<string, unknown>,
-    ctx: ToolContext,
-  ): Promise<ToolExecutionResult> {
+export async function run(input: Record<string, unknown>, ctx: ToolContext): Promise<ToolExecutionResult> {
     const query = String(input.query ?? "").trim();
     const pageSize = Math.min(Number(input.page_size) || 5, 20);
     const dataSource = String(input.data_source ?? "auto").trim();
@@ -159,8 +132,7 @@ export default {
     }
 
     return { content: "No data source available.", isError: true };
-  },
-};
+}
 
 // --- USDA FoodData Central ---
 

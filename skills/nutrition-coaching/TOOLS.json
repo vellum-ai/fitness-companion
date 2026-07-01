@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "tools": [
+    {
+      "name": "fitness_calc_macros",
+      "description": "Calculate daily calorie and macronutrient targets from body stats and fitness goal. Uses the Mifflin-St Jeor equation for BMR and activity multipliers for TDEE. Use when the user asks for macro targets, calorie goals, or wants to plan their nutrition.",
+      "category": "health",
+      "risk": "low",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "age": {
+            "type": "number",
+            "description": "Age in years."
+          },
+          "sex": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female"
+            ],
+            "description": "Biological sex (affects BMR calculation)."
+          },
+          "height_cm": {
+            "type": "number",
+            "description": "Height in centimeters."
+          },
+          "weight_kg": {
+            "type": "number",
+            "description": "Body weight in kilograms."
+          },
+          "activity_level": {
+            "type": "string",
+            "enum": [
+              "sedentary",
+              "light",
+              "moderate",
+              "active",
+              "very_active"
+            ],
+            "description": "Activity level: sedentary (little/no exercise), light (1-3 days/week), moderate (3-5 days/week), active (6-7 days/week), very_active (twice daily or physical job)."
+          },
+          "goal": {
+            "type": "string",
+            "enum": [
+              "cut",
+              "maintain",
+              "bulk"
+            ],
+            "description": "Fitness goal: cut (lose fat), maintain, bulk (build muscle)."
+          },
+          "deficit_pct": {
+            "type": "number",
+            "description": "Calorie deficit/surplus percentage. Defaults to 20% for cut, 0% for maintain, 15% for bulk."
+          }
+        },
+        "required": [
+          "age",
+          "sex",
+          "height_cm",
+          "weight_kg",
+          "activity_level",
+          "goal"
+        ]
+      },
+      "executor": "tools/fitness_calc_macros.ts",
+      "execution_target": "sandbox"
+    },
+    {
+      "name": "fitness_log_meal",
+      "description": "Log a meal entry with calories and macronutrients. Use when the user tells you what they ate, mentions a meal, or wants to track food intake. Meal type should be breakfast, lunch, dinner, or snack.",
+      "category": "health",
+      "risk": "low",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "meal_type": {
+            "type": "string",
+            "enum": [
+              "breakfast",
+              "lunch",
+              "dinner",
+              "snack"
+            ],
+            "description": "Which meal this entry is for."
+          },
+          "food_name": {
+            "type": "string",
+            "description": "Name of the food or dish."
+          },
+          "calories": {
+            "type": "number",
+            "description": "Calories in this entry."
+          },
+          "protein_g": {
+            "type": "number",
+            "description": "Protein in grams."
+          },
+          "carbs_g": {
+            "type": "number",
+            "description": "Carbohydrates in grams."
+          },
+          "fat_g": {
+            "type": "number",
+            "description": "Fat in grams."
+          },
+          "servings": {
+            "type": "number",
+            "description": "Number of servings. Defaults to 1."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes about the meal."
+          }
+        },
+        "required": [
+          "meal_type",
+          "food_name",
+          "calories"
+        ]
+      },
+      "executor": "tools/fitness_log_meal.ts",
+      "execution_target": "sandbox"
+    },
+    {
+      "name": "fitness_nutrition_lookup",
+      "description": "Look up nutrition information for a food item. Searches USDA FoodData Central (if an API key is configured) or OpenFoodFacts (free, no key). Use when the user asks about calories, macros, or nutrition for a specific food, or wants to find a product by barcode.",
+      "category": "health",
+      "risk": "low",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Food name to search for, or a barcode number."
+          },
+          "page_size": {
+            "type": "number",
+            "description": "Max results to return. Defaults to 5."
+          },
+          "data_source": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "usda",
+              "openfoodfacts"
+            ],
+            "description": "Which data source to use. 'auto' uses USDA if an API key is configured, otherwise falls back to OpenFoodFacts. Defaults to 'auto'."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "executor": "tools/fitness_nutrition_lookup.ts",
+      "execution_target": "sandbox"
+    }
+  ]
+}
